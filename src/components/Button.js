@@ -3,8 +3,11 @@ import "../App.css";
 const Button = ({ text, setDisplay, display, equation, setEquation }) => {
     const handleClick = () => {
         if (text === ".") {
-            // if the last character is an operator, don't add a dot "."
-            if ("+-x÷%+/-. ".includes(display[display.length - 1])) {
+            const numbers = equation.split(/(?<=[ ])/); // split the equation into numbers and operators
+            const lastNumber = numbers[numbers.length - 1];
+
+            // if the last character is an operator or last number includes a dot ".", don't add a dot "."
+            if ("+-x÷%+/-.".includes(display[display.length - 1]) || lastNumber.includes(".")) {
                 return;
             }
 
@@ -45,7 +48,7 @@ const Button = ({ text, setDisplay, display, equation, setEquation }) => {
             }
 
             // if plus-minus is applied to calculations involving operators
-            const numbers = equation.split(/(?<=[ ])/); // Membagi persamaan menjadi angka dan operator
+            const numbers = equation.split(/(?<=[ ])/); // split the equation into numbers and operators
             const lastNumber = parseFloat(numbers[numbers.length - 1]);
             const plusMinus = lastNumber * -1;
             const updatedDisplay = display.slice(0, -numbers[numbers.length - 1].length) + plusMinus.toString();
@@ -62,7 +65,7 @@ const Button = ({ text, setDisplay, display, equation, setEquation }) => {
             }
 
             // if percentage is applied to calculations involving operators
-            const numbers = equation.split(/(?<=[ ])/); // Membagi persamaan menjadi angka dan operator
+            const numbers = equation.split(/(?<=[ ])/); // split the equation into numbers and operators
             const lastNumber = parseFloat(numbers[numbers.length - 1]);
             const percentage = lastNumber / 100;
             const updatedDisplay = display.slice(0, -numbers[numbers.length - 1].length) + percentage.toString();
@@ -84,7 +87,7 @@ const Button = ({ text, setDisplay, display, equation, setEquation }) => {
             setEquation(equation + " - ");
         } else if (text === "=") {
             // if the last character is an operator, do the calculation without including the character after the last number
-            if ("+-x÷%+/-. ".includes(display[display.length - 1])) {
+            if ("+-x÷%+/- ".includes(display[display.length - 1])) {
                 console.log(equation.slice(0, -2))
                 setDisplay(eval(equation.slice(0, -2)));
                 setEquation(eval(equation.slice(0, -2)));
