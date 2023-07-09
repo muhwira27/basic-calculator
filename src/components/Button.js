@@ -88,22 +88,39 @@ const Button = ({ text, setDisplay, display, equation, setEquation }) => {
         } else if (text === "=") {
             // if the last character is an operator, do the calculation without including the character after the last number
             if ("+-x÷%+/- ".includes(display[display.length - 1])) {
-                console.log(equation.slice(0, -2))
-                setDisplay(eval(equation.slice(0, -2)));
-                setEquation(eval(equation.slice(0, -2)));
+                const result = eval(equation.slice(0, -2));
+                setDisplay(result.toString());
+                setEquation(result.toString());
                 return;
             }
 
             // if the last character is a number, do the calculation
-            setDisplay(eval(equation));
-            setEquation(eval(equation));
-        } else {
-            // if last character is 0, don't add 0
-            if ("0".includes(display[display.length - 1])) {
+            const result = eval(equation);
+            setDisplay(result.toString());
+            setEquation(result.toString());
+        } else if (text === "0") {
+            const numbers = equation.split(/(?<=[ ])/); // split the equation into numbers and operators
+            const lastNumber = numbers[numbers.length - 1];
+            // if a 0 is applied to a calculation that includes an operator and the number after the operator is 0, don't add 0
+            if ("0".includes(lastNumber)) {
                 return;
             }
 
-            //if last character is not 0, add 0 after the last character
+            setDisplay(display === "0" ? text : display + text);
+            setEquation(equation + text);
+
+        } else {
+            const numbers = equation.split(/(?<=[ ])/); // split the equation into numbers and operators
+            const lastNumber = numbers[numbers.length - 1];
+            // if a number is applied to a calculation that includes an operator and the number after the operator is 0, replace 0 with the entered number
+            if ("0".includes(lastNumber)) {
+                const updatedDisplay = display.slice(0, -numbers[numbers.length - 1].length) + text;
+                const updatedEquation = equation.slice(0, -numbers[numbers.length - 1].length) + text;
+                setDisplay(updatedDisplay);
+                setEquation(updatedEquation);
+                return;
+            }
+
             setDisplay(display + text);
             setEquation(equation + text);
         }
